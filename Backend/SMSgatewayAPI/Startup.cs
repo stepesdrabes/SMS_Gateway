@@ -38,7 +38,6 @@ namespace SMSgatewayAPI
                 });
             });
 
-
             services.AddCors();
 
             // Date since when should snowflake IDs generate
@@ -70,7 +69,7 @@ namespace SMSgatewayAPI
                 .SetIsOriginAllowed(_ => true)
                 .AllowCredentials());
 
-            //application.UseHttpsRedirection();
+            application.UseHttpsRedirection();
             application.UseRouting();
             application.UseAuthorization();
 

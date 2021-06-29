@@ -20,9 +20,6 @@ namespace SMSgatewayAPI
             .ConfigureWebHostDefaults(webBuilder =>
             {
                 webBuilder.UseStartup<Startup>();
-
-                // IP for testing purposes
-                webBuilder.UseUrls("http://192.168.1.3:5000/");
             });
     }
 }
