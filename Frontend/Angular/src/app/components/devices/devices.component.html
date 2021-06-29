@@ -1,0 +1,26 @@
+<div class="title">
+  <span class="material-icons">smartphone</span>
+  <h1>Připojená zařízení</h1>
+</div>
+
+<div class="devices">
+  <ng-container *ngFor="let device of data.devices">
+    <div class="device box">
+      <div class="spec">
+        <span class="material-icons">smartphone</span>
+        <h1>{{ device.vendor }}</h1>
+        <h2>{{ device.model }}</h2>
+      </div>
+
+      <div class="spec">
+        <span class="android material-icons">android</span>
+        <h2>{{ device.osVersion }}</h2>
+      </div>
+    </div>
+  </ng-container>
+
+  <div class="no-devices" *ngIf="!data.devices || data.devices.length == 0">
+    <span class="material-icons">link_off</span>
+    <h3>Žádná připojená zařízení</h3>
+  </div>
+</div>

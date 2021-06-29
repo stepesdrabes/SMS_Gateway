@@ -1,0 +1,45 @@
+:root {
+  --background-color: #F8F8F8;
+  --box-corner-radius:16px;
+  --box-background-color: #FFFFFF;
+  --gap-width: 20px;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Montserrat', sans-serif;
+  color: #515151;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+.box {
+  padding: var(--box-corner-radius);
+  border-radius: var(--box-corner-radius);
+}
+
+.title {
+  width: 100%;
+  height: 80px;
+  display: flex;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+  gap: calc(var(--gap-width) / 2);
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+}
+
+.title h1 {
+  font-weight: inherit;
+  font-size: 22px;
+}
+
+.title span {
+  font-size: 30px;
+}

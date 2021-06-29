@@ -1,0 +1,73 @@
+.statistics {
+  --features-height: 200px;
+  width: 100%;
+  display: grid;
+  justify-content: space-between;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  gap: var(--gap-width);
+  color: white;
+}
+.statistics .box {
+  width: 100%;
+  height: var(--features-height);
+  background-color: #BFF9C5;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  flex-direction: column;
+  color: #58BC61;
+}
+.statistics .box .number {
+  flex: 1;
+  color: inherit;
+  width: auto;
+  font-size: 6rem;
+  font-weight: 900;
+}
+.statistics .box .stat-title {
+  flex: 1;
+  margin-top: -10px;
+  color: inherit;
+  font-size: 1.2rem;
+}
+
+.error {
+  grid-template-columns: 1fr;
+}
+.error .box {
+  background-color: #F9BFBF;
+}
+.error .box span {
+  font-size: 55px;
+  color: #EF6565;
+}
+.error .box h1 {
+  color: #EF6565;
+  font-size: 30px;
+}
+
+@media only screen and (max-width: 1200px) {
+  .statistics {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+@media only screen and (max-width: 600px) {
+  .statistics {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .statistics .box {
+    height: 120px;
+  }
+  .statistics .box .number {
+    font-size: 4rem;
+    font-weight: 900;
+  }
+  .statistics .box .stat-title {
+    color: inherit;
+    font-size: 0.8rem;
+  }
+}
+
+/*# sourceMappingURL=statistics.component.css.map */

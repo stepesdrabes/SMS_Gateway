@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="error_red">#EF6565</color>
+    <color name="background_red">#F9BFBF</color>
+    <color name="success_green">#58BC61</color>
+    <color name="background_green">#BFF9C5</color>
+    <color name="background_yellow">#FFF5CE</color>
+    <color name="warning_yellow">#F8DF7B</color>
+    <color name="box_background_gray">#F8F8F8</color>
+    <color name="text_color_light">#D2D2D2</color>
+    <color name="text_color_dark">#A2A2A2</color>
+</resources>

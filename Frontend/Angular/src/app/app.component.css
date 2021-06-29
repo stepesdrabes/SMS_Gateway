@@ -1,0 +1,110 @@
+main {
+  width: 100%;
+  height: 100vh;
+  background-color: var(--background-color);
+  display: flex;
+  gap: var(--gap-width);
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.content {
+  width: 60%;
+  min-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-width);
+}
+.content .main-section {
+  display: grid;
+  height: 100%;
+  grid-template-columns: 1fr 1fr;
+  flex-direction: row;
+  gap: var(--gap-width);
+}
+.content .main-section .box {
+  min-height: 100px;
+  justify-content: center;
+  background-color: #ffffff;
+}
+.content .main-section .send-sms input {
+  width: 100%;
+}
+.content .main-section .right-panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-width);
+}
+.content .main-section .right-panel .devices {
+  flex: 3;
+}
+.content .main-section .right-panel .download-apk {
+  flex: 1;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  gap: var(--gap-width);
+  color: #58BC61;
+  background-color: #BFF9C5;
+}
+.content .main-section .right-panel .download-apk .android-logo {
+  color: #58BC61;
+  font-size: 90px;
+}
+.content .main-section .right-panel .download-apk:hover .download-icon {
+  width: 50px;
+  opacity: 1;
+}
+.content .main-section .right-panel .download-apk .download-icon {
+  overflow: hidden;
+  color: #58BC61;
+  width: 0;
+  font-size: 50px;
+  transition: 0.3s;
+}
+.content .main-section .right-panel .download-apk .apk-info {
+  display: flex;
+  flex-direction: column;
+}
+.content .main-section .right-panel .download-apk .apk-info h1 {
+  color: #58BC61;
+  font-weight: 800;
+  font-size: 1.5rem;
+}
+.content .main-section .right-panel .download-apk .apk-info .info {
+  display: flex;
+  gap: calc(var(--gap-width) / 2);
+}
+.content .main-section .right-panel .download-apk .apk-info .info span {
+  color: #58BC61;
+  font-size: 20px;
+}
+.content .main-section .right-panel .download-apk .apk-info .info h4 {
+  color: #58BC61;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+@media only screen and (max-width: 1000px) {
+  main {
+    height: auto;
+  }
+
+  .content {
+    width: 75%;
+    margin-top: calc(var(--gap-width) * 2);
+    margin-bottom: calc(var(--gap-width) * 2);
+  }
+
+  .content .main-section {
+    grid-template-columns: 100%;
+  }
+}
+@media only screen and (max-width: 600px) {
+  .content {
+    width: 90%;
+  }
+}
+
+/*# sourceMappingURL=app.component.css.map */

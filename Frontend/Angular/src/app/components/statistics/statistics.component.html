@@ -1,0 +1,28 @@
+<div class="statistics" *ngIf="data.statistics">
+  <div class="box">
+    <h1 class="number">{{ data.statistics.sentMessages }}</h1>
+    <h1 class="stat-title">Zpráv celkem</h1>
+  </div>
+
+  <div class="box">
+    <h1 class="number">{{ data.statistics.activeDevices }}</h1>
+    <h1 class="stat-title">Aktivních zařízení</h1>
+   </div>
+
+  <div class="box">
+    <h1 class="number">{{ data.statistics.registeredDevices }}</h1>
+    <h1 class="stat-title">Registrovaných zařízení</h1>
+  </div>
+
+  <div class="box">
+    <h1 class="number">{{ data.statistics.registeredDevices - data.statistics.activeDevices }}</h1>
+    <h1 class="stat-title">Neaktivních zařízení</h1>
+  </div>
+</div>
+
+<div class="statistics error" *ngIf="!data.statistics">
+  <div class="box">
+    <span class="material-icons">wifi_off</span>
+    <h1>Připojení k serveru nelze navázat</h1>
+  </div>
+</div>

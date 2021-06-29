@@ -1,0 +1,50 @@
+<div class="title">
+  <span class="material-icons">send</span>
+  <h1>Odesílání SMS zpráv</h1>
+</div>
+
+<form class="sms-form" #form="ngForm" (ngSubmit)="onSubmit(form)" novalidate>
+  <div>
+    <div class="title">
+      <h1>Telefonní číslo</h1>
+    </div>
+
+    <div class="phone-number">
+      <select class="box" name="prefix" ngModel required [disabled]="!data.devices || data.devices.length == 0" autocomplete="off">
+        <option name="czechia" value="+420" selected>+420</option>
+        <option name="slovakia" value="+421">+421</option>
+      </select>
+
+      <input class="box" type="text" name="phone" ngModel required [disabled]="!data.devices || data.devices.length == 0" autocomplete="off">
+    </div>
+  </div>
+
+  <div>
+    <div class="title">
+      <h1>Zpráva</h1>
+    </div>
+
+    <input class="box" type="text" name="message" ngModel required [disabled]="!data.devices || data.devices.length == 0" autocomplete="off">
+  </div>
+
+  <button class="send-button box" type="submit" *ngIf="!data.sendingMessage" [disabled]="form.invalid || !data.devices || data.devices.length == 0">Odeslat</button>
+
+  <h4 *ngIf="!data.devices || data.devices.length == 0">Zprávy nemohou být odesílány z důvodu žádného připojeného zařízení</h4>
+</form>
+
+<div class="message-state" *ngIf="data.sendingMessage || data.state">
+  <div class="sending-message" *ngIf="data.sendingMessage && !data.state">
+    <h1>Zpráva se odesílá</h1>
+    <div class="lds-ellipsis"><div></div><div></div><div></div><div></div></div>
+  </div>
+
+  <div class="message-result error" *ngIf="data.state == 2">
+    <span class="material-icons">close</span>
+    <h1>Odesílání zprávy selhalo</h1>
+  </div>
+
+  <div class="message-result ok" *ngIf="data.state == 1">
+    <span class="material-icons">done</span>
+    <h1>Zpráva úspěšně zaslána</h1>
+  </div>
+</div>
