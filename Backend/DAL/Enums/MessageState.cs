@@ -1,9 +1,8 @@
-namespace DAL.Enums
+namespace DAL.Enums;
+
+public enum MessageState
 {
-    public enum MessageState
-    {
-        Waiting = 0,
-        Sent = 1,
-        Failed = 2
-    }
+    Waiting = 0,
+    Sent = 1,
+    Failed = 2
 }

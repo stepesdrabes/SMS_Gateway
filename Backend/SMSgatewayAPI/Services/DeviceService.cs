@@ -7,75 +7,65 @@ using DAL.Entities;
 using Microsoft.EntityFrameworkCore;
 using SMSgatewayAPI.Managers;
 
-namespace SMSgatewayAPI.Services
+namespace SMSgatewayAPI.Services;
+
+public interface IDeviceService
 {
-    public interface IDeviceService
+    /// <summary>
+    /// Registers the device in the database,
+    /// </summary>
+    /// <param name="deviceModel">Device to register</param>
+    Task RegisterDevice(DeviceModel deviceModel);
+
+    /// <summary>
+    /// Gets device with certain ID from the database
+    /// </summary>
+    /// <param name="deviceId">ID of the device</param>
+    /// <returns>DeviceModel with certain ID or null</returns>
+    Task<DeviceModel> GetDevice(string deviceId);
+
+    /// <summary>
+    /// Gets list of all currently connected devices
+    /// </summary>
+    /// <returns>List of connected devices</returns>
+    Task<IEnumerable<DeviceModel>> GetConnectedDevices();
+}
+
+public class DeviceService : IDeviceService
+{
+    private readonly DatabaseContext _context;
+    private readonly DevicesManager _devicesManager;
+
+    public DeviceService(DatabaseContext context, DevicesManager devicesManager)
     {
-        /// <summary>
-        /// Registers the device in the database,
-        /// </summary>
-        /// <param name="deviceModel">Device to register</param>
-        Task RegisterDevice(DeviceModel deviceModel);
-
-        /// <summary>
-        /// Gets device with certain ID from the database
-        /// </summary>
-        /// <param name="deviceId">ID of the device</param>
-        /// <returns>DeviceModel with certain ID or null</returns>
-        Task<DeviceModel> GetDevice(string deviceId);
-
-        /// <summary>
-        /// Gets list of all currently connected devices
-        /// </summary>
-        /// <returns>List of connected devices</returns>
-        Task<IEnumerable<DeviceModel>> GetConnectedDevices();
+        _context = context;
+        _devicesManager = devicesManager;
     }
 
-    public class DeviceService : IDeviceService
+    public async Task<DeviceModel> GetDevice(string deviceId) => await _context.Devices.FindAsync(deviceId);
+
+    public async Task RegisterDevice(DeviceModel deviceModel)
     {
-        private readonly DevicesManager _devicesManager;
+        var device = await _context.Devices.FirstOrDefaultAsync(model => model.DeviceId == deviceModel.DeviceId);
 
-        public DeviceService(DevicesManager devicesManager)
+        // Checks if the device isn't already in the database
+        if (device != null)
         {
-            _devicesManager = devicesManager;
+            return;
         }
 
-        public async Task RegisterDevice(DeviceModel deviceModel)
-        {
-            await using var context = new DatabaseContext();
+        deviceModel.RegisteredAt = DateTime.Now;
 
-            var device = await context.Devices.FirstOrDefaultAsync(model => model.DeviceId == deviceModel.DeviceId);
+        // Adds the device to the database and saves the changes
+        await _context.Devices.AddAsync(deviceModel);
+        await _context.SaveChangesAsync();
+    }
 
-            // Checks if the device isn't already in the database
-            if (device != null)
-            {
-                return;
-            }
+    public async Task<IEnumerable<DeviceModel>> GetConnectedDevices()
+    {
+        var devices = await _context.Devices.ToListAsync();
 
-            deviceModel.RegisteredAt = DateTime.Now;
-
-            // Adds the device to the database and saves the changes
-            await context.Devices.AddAsync(deviceModel);
-            await context.SaveChangesAsync();
-        }
-
-        public async Task<DeviceModel> GetDevice(string deviceId)
-        {
-            await using var context = new DatabaseContext();
-
-            // Returns the first device that has the given ID
-            return await context.Devices.FirstOrDefaultAsync(model => model.DeviceId == deviceId);
-        }
-
-        public async Task<IEnumerable<DeviceModel>> GetConnectedDevices()
-        {
-            await using var context = new DatabaseContext();
-
-            // Gets list of all devices
-            var devices = context.Devices.ToList();
-
-            // Returns collection of devices that are connected
-            return devices.Where(model => _devicesManager.IsDeviceConnected(model.DeviceId));
-        }
+        // Returns collection of devices that are connected
+        return devices.Where(model => _devicesManager.IsDeviceConnected(model.DeviceId));
     }
 }

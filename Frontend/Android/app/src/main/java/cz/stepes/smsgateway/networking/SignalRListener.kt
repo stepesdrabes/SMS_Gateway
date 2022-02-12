@@ -4,7 +4,12 @@ import com.microsoft.signalr.HubConnection
 import com.microsoft.signalr.HubConnectionBuilder
 import com.microsoft.signalr.HubConnectionState
 
-class SignalRListener(token: String, deviceId: String, private val onClosed: (Exception?) -> Unit, private val onSendMessage: (String) -> Unit) {
+class SignalRListener(
+    token: String,
+    deviceId: String,
+    private val onClosed: (Exception?) -> Unit,
+    private val onSendMessage: (String) -> Unit
+) {
 
     var hubConnection: HubConnection = HubConnectionBuilder.create(HttpClient.Endpoints.HUB_URL)
         .withHeader("TOKEN", token)

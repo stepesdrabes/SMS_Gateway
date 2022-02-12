@@ -10,12 +10,14 @@
     </div>
 
     <div class="phone-number">
-      <select class="box" name="prefix" ngModel required [disabled]="!data.devices || data.devices.length == 0" autocomplete="off">
+      <select class="box" name="prefix" ngModel required [disabled]="!data.devices || data.devices.length == 0"
+              autocomplete="off">
         <option name="czechia" value="+420" selected>+420</option>
         <option name="slovakia" value="+421">+421</option>
       </select>
 
-      <input class="box" type="text" name="phone" ngModel required [disabled]="!data.devices || data.devices.length == 0" autocomplete="off">
+      <input class="box" type="text" name="phone" ngModel required
+             [disabled]="!data.devices || data.devices.length == 0" autocomplete="off">
     </div>
   </div>
 
@@ -24,18 +26,27 @@
       <h1>Zpráva</h1>
     </div>
 
-    <input class="box" type="text" name="message" ngModel required [disabled]="!data.devices || data.devices.length == 0" autocomplete="off">
+    <input class="box" type="text" name="message" ngModel required
+           [disabled]="!data.devices || data.devices.length == 0" autocomplete="off">
   </div>
 
-  <button class="send-button box" type="submit" *ngIf="!data.sendingMessage" [disabled]="form.invalid || !data.devices || data.devices.length == 0">Odeslat</button>
+  <button class="send-button box" type="submit" *ngIf="!data.sendingMessage"
+          [disabled]="form.invalid || !data.devices || data.devices.length == 0">Odeslat
+  </button>
 
-  <h4 *ngIf="!data.devices || data.devices.length == 0">Zprávy nemohou být odesílány z důvodu žádného připojeného zařízení</h4>
+  <h4 *ngIf="!data.devices || data.devices.length == 0">Zprávy nemohou být odesílány z důvodu žádného připojeného
+    zařízení</h4>
 </form>
 
 <div class="message-state" *ngIf="data.sendingMessage || data.state">
   <div class="sending-message" *ngIf="data.sendingMessage && !data.state">
     <h1>Zpráva se odesílá</h1>
-    <div class="lds-ellipsis"><div></div><div></div><div></div><div></div></div>
+    <div class="lds-ellipsis">
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+    </div>
   </div>
 
   <div class="message-result error" *ngIf="data.state == 2">

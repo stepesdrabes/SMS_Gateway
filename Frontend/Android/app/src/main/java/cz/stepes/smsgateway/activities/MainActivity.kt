@@ -8,7 +8,6 @@ import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import cz.stepes.smsgateway.R
-import cz.stepes.smsgateway.networking.SignalRListener
 
 class MainActivity : AppCompatActivity() {
 

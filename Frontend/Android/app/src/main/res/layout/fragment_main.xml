@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".fragments.MainFragment"
-    android:background="@color/background_green">
+    android:background="@color/background_green"
+    tools:context=".fragments.MainFragment">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/app_toolbar"
@@ -20,46 +20,46 @@
             android:layout_height="match_parent"
             android:fitsSystemWindows="true"
             app:contentScrim="@color/background_green"
-            app:layout_scrollFlags="scroll|snap|exitUntilCollapsed"
             app:expandedTitleTextAppearance="@style/CollapsingToolbarLayoutExpandedTextStyle"
-            app:title="@string/app_name"
-            app:scrimAnimationDuration="250">
+            app:layout_scrollFlags="scroll|snap|exitUntilCollapsed"
+            app:scrimAnimationDuration="250"
+            app:title="@string/app_name">
 
             <LinearLayout
-                android:layout_marginTop="18dp"
+                android:id="@+id/connected"
                 android:layout_width="match_parent"
                 android:layout_height="150dp"
                 android:layout_gravity="center_vertical"
+                android:layout_marginTop="18dp"
                 android:gravity="center_vertical"
-                android:id="@+id/connected"
                 android:orientation="vertical"
                 app:layout_collapseMode="parallax">
 
                 <ImageView
                     android:layout_width="fill_parent"
                     android:layout_height="54dp"
+                    android:contentDescription="@string/connection_error_image"
                     android:src="@drawable/ic_check_circle"
-                    tools:ignore="MissingConstraints"
                     app:tint="@color/success_green"
-                    android:contentDescription="@string/connection_error_image" />
+                    tools:ignore="MissingConstraints" />
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/connected"
-                    android:gravity="center"
-                    android:textColor="@color/success_green"
-                    android:textStyle="bold"
                     android:layout_marginHorizontal="40pt"
-                    android:textSize="18sp"/>
+                    android:gravity="center"
+                    android:text="@string/connected"
+                    android:textColor="@color/success_green"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
 
                 <TextView
+                    android:id="@+id/connection_id"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/connection_id"
                     android:gravity="center"
                     android:textColor="@color/success_green"
-                    android:textSize="11sp"/>
+                    android:textSize="11sp" />
             </LinearLayout>
 
         </com.google.android.material.appbar.CollapsingToolbarLayout>
@@ -69,13 +69,14 @@
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/messages_layout">
+        android:background="@drawable/messages_layout"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/messages_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:paddingBottom="20dp"/>
+            android:paddingBottom="20dp" />
 
     </androidx.core.widget.NestedScrollView>
 

@@ -9,108 +9,94 @@ using IdGenerator;
 using Microsoft.EntityFrameworkCore;
 using SMSgatewayAPI.Models;
 
-namespace SMSgatewayAPI.Services
+namespace SMSgatewayAPI.Services;
+
+public interface IMessageService
 {
-    public interface IMessageService
+    Task<MessageModel> GetMessage(ulong messageId);
+
+    /// <summary>
+    /// Gets list of all messages sent by a device with certain ID
+    /// </summary>
+    /// <param name="deviceId">ID of the device</param>
+    /// <returns>List of all messages</returns>
+    Task<List<MessageModel>> GetMessages(string deviceId);
+
+    /// <summary>
+    /// Gets list of all sent messages
+    /// </summary>
+    /// <returns>List of all messages</returns>
+    Task<List<MessageModel>> GetAllMessages();
+
+    /// <summary>
+    /// Creates a message on the database
+    /// </summary>
+    /// <param name="model">Message to create</param>
+    /// <returns>Created message</returns>
+    Task<MessageModel> CreateMessage(CreateMessageModel model);
+
+    /// <summary>
+    /// Updates the message on the database with specified message state
+    /// </summary>
+    /// <param name="message">Message to update</param>
+    /// <param name="state">New state of the message</param>
+    Task UpdateMessage(MessageModel message, MessageState state);
+}
+
+public class MessageService : IMessageService
+{
+    private readonly DatabaseContext _context;
+    private readonly SnowflakeGenerator _snowflakeGenerator;
+
+    public MessageService(DatabaseContext context, SnowflakeGenerator snowflakeGenerator)
     {
-        Task<MessageModel> GetMessage(ulong messageId);
-
-        /// <summary>
-        /// Gets list of all messages sent by a device with certain ID
-        /// </summary>
-        /// <param name="deviceId">ID of the device</param>
-        /// <returns>List of all messages</returns>
-        Task<List<MessageModel>> GetMessages(string deviceId);
-
-        /// <summary>
-        /// Gets list of all sent messages
-        /// </summary>
-        /// <returns>List of all messages</returns>
-        Task<List<MessageModel>> GetAllMessages();
-
-        /// <summary>
-        /// Creates a message on the database
-        /// </summary>
-        /// <param name="model">Message to create</param>
-        /// <returns>Created message</returns>
-        Task<MessageModel> CreateMessage(CreateMessageModel model);
-
-        /// <summary>
-        /// Updates the message on the database with specified message state
-        /// </summary>
-        /// <param name="message">Message to update</param>
-        /// <param name="state">New state of the message</param>
-        Task UpdateMessage(MessageModel message, MessageState state);
+        _context = context;
+        _snowflakeGenerator = snowflakeGenerator;
     }
 
-    public class MessageService : IMessageService
+    public async Task<MessageModel> GetMessage(ulong messageId) => await _context.Messages.FindAsync(messageId);
+
+    public async Task<List<MessageModel>> GetMessages(string deviceId)
     {
-        private readonly SnowflakeGenerator _snowflakeGenerator;
+        // Return list of messages sent by device with certain ID
+        return await _context.Messages
+            .Where(model => model.DeviceId == deviceId)
+            .OrderByDescending(model => model.SentAt)
+            .ToListAsync();
+    }
 
-        public MessageService(SnowflakeGenerator snowflakeGenerator)
+    public async Task<List<MessageModel>> GetAllMessages() => await _context.Messages.ToListAsync();
+
+    public async Task<MessageModel> CreateMessage(CreateMessageModel model)
+    {
+        // Creates a new instance of the message
+        var message = new MessageModel
         {
-            _snowflakeGenerator = snowflakeGenerator;
-        }
+            MessageId = _snowflakeGenerator.NextLong(),
+            Content = model.Content,
+            Recipient = model.Recipient,
+            DeviceId = model.DeviceId,
+            State = MessageState.Waiting,
+            SentAt = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
+            ConnectionId = model.ConnectionId
+        };
 
-        public async Task<MessageModel> GetMessage(ulong messageId)
-        {
-            await using var context = new DatabaseContext();
+        // Saves the messages in the database
+        await _context.Messages.AddAsync(message);
+        await _context.SaveChangesAsync();
 
-            return await context.Messages.FirstOrDefaultAsync(model => model.MessageId == messageId);
-        }
+        return message;
+    }
 
-        public async Task<List<MessageModel>> GetMessages(string deviceId)
-        {
-            await using var context = new DatabaseContext();
+    public async Task UpdateMessage(MessageModel message, MessageState state)
+    {
+        // Changes state of the message and processed at date
+        message.State = state;
+        message.Updated = true;
+        message.ProceededAt = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
 
-            // Return list of messages sent by device with certain ID
-            return context.Messages.Where(model => model.DeviceId == deviceId).OrderByDescending(model => model.SentAt)
-                .ToList();
-        }
-
-        public async Task<List<MessageModel>> GetAllMessages()
-        {
-            await using var context = new DatabaseContext();
-
-            // Returns list of all messages
-            return context.Messages.ToList();
-        }
-
-        public async Task<MessageModel> CreateMessage(CreateMessageModel model)
-        {
-            await using var context = new DatabaseContext();
-
-            // Creates a new instance of the message
-            var message = new MessageModel
-            {
-                MessageId = _snowflakeGenerator.NextLong(),
-                Content = model.Content,
-                Recipient = model.Recipient,
-                DeviceId = model.DeviceId,
-                State = MessageState.Waiting,
-                SentAt = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
-                ConnectionId = model.ConnectionId
-            };
-
-            // Saves the messages in the database
-            await context.Messages.AddAsync(message);
-            await context.SaveChangesAsync();
-
-            return message;
-        }
-
-        public async Task UpdateMessage(MessageModel message, MessageState state)
-        {
-            await using var context = new DatabaseContext();
-
-            // Changes state of the message and processed at date
-            message.State = state;
-            message.Updated = true;
-            message.ProceededAt = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-
-            // Updates the message in the database
-            context.Messages.Update(message);
-            await context.SaveChangesAsync();
-        }
+        // Updates the message in the database
+        _context.Messages.Update(message);
+        await _context.SaveChangesAsync();
     }
 }

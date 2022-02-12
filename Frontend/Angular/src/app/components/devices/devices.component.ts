@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { DataAccessService } from "../../services/data-access.service";
+import {Component, OnInit} from '@angular/core';
+import {DataAccessService} from "../../services/data-access.service";
 
 @Component({
   selector: 'app-devices',

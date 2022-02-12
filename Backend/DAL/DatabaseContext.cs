@@ -1,17 +1,16 @@
 using DAL.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace DAL
+namespace DAL;
+
+public class DatabaseContext : DbContext
 {
-    public class DatabaseContext : DbContext
+    public DbSet<MessageModel> Messages { get; set; }
+
+    public DbSet<DeviceModel> Devices { get; set; }
+
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        public DbSet<MessageModel> Messages { get; set; }
-
-        public DbSet<DeviceModel> Devices { get; set; }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            optionsBuilder.UseSqlite("Filename=GatewayDatabase.db");
-        }
+        optionsBuilder.UseSqlite("Filename=GatewayDatabase.db");
     }
 }

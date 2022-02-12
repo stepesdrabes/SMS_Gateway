@@ -4,84 +4,83 @@ using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
 using SMSgatewayAPI.Managers;
 
-namespace SMSgatewayAPI.Hubs
+namespace SMSgatewayAPI.Hubs;
+
+public class ConnectionHub : Hub
 {
-    public class ConnectionHub : Hub
+    private readonly ILogger<ConnectionHub> _logger;
+
+    private readonly IHubContext<WebHub> _webHub;
+
+    private readonly DevicesManager _devicesManager;
+    private readonly SessionTokenManager _tokenManager;
+
+    public ConnectionHub(ILogger<ConnectionHub> logger, IHubContext<WebHub> webHub, DevicesManager devicesManager,
+        SessionTokenManager tokenManager)
     {
-        private readonly ILogger<ConnectionHub> _logger;
+        _logger = logger;
+        _webHub = webHub;
+        _devicesManager = devicesManager;
+        _tokenManager = tokenManager;
+    }
 
-        private readonly IHubContext<WebHub> _webHub;
+    /// <summary>
+    /// Gets called when a new devices connects
+    /// </summary>
+    public override async Task OnConnectedAsync()
+    {
+        // Gets the connection ID
+        var connectionId = Context.ConnectionId;
 
-        private readonly DevicesManager _devicesManager;
-        private readonly SessionTokenManager _tokenManager;
+        // Gets HTTP headers with a Token and a DeviceID 
+        var httpContext = Context.GetHttpContext();
+        var token = httpContext.Request.Headers["TOKEN"].ToString();
+        var deviceId = httpContext.Request.Headers["DEVICE_ID"].ToString();
 
-        public ConnectionHub(ILogger<ConnectionHub> logger, IHubContext<WebHub> webHub, DevicesManager devicesManager,
-            SessionTokenManager tokenManager)
+        // Checks if the tokens match
+        if (!_tokenManager.DoesTokenMatch(deviceId, token))
         {
-            _logger = logger;
-            _webHub = webHub;
-            _devicesManager = devicesManager;
-            _tokenManager = tokenManager;
+            // Disconnect the device, because it sent wrong token
+            Context.Abort();
+
+            _logger.Log(LogLevel.Warning, $"Device with ID {deviceId} tried to log in with wrong token!");
+
+            return;
         }
 
-        /// <summary>
-        /// Gets called when a new devices connects
-        /// </summary>
-        public override async Task OnConnectedAsync()
-        {
-            // Gets the connection ID
-            var connectionId = Context.ConnectionId;
+        _devicesManager.AddDevice(deviceId, connectionId);
 
-            // Gets HTTP headers with a Token and a DeviceID 
-            var httpContext = Context.GetHttpContext();
-            var token = httpContext.Request.Headers["TOKEN"].ToString();
-            var deviceId = httpContext.Request.Headers["DEVICE_ID"].ToString();
+        _logger.Log(LogLevel.Information, $"Device with ID {deviceId} connected");
 
-            // Checks if the tokens match
-            if (!_tokenManager.DoesTokenMatch(deviceId, token))
-            {
-                // Disconnect the device, because it sent wrong token
-                Context.Abort();
+        // Notifies all web client about new device connecting
+        await _webHub.Clients.All.SendAsync("DevicesChange");
+        await _webHub.Clients.All.SendAsync("StatisticsChange");
 
-                _logger.Log(LogLevel.Warning, $"Device with ID {deviceId} tried to log in with wrong token!");
+        await base.OnConnectedAsync();
+    }
 
-                return;
-            }
+    /// <summary>
+    /// Gets called when a device disconnects
+    /// </summary>
+    /// <param name="exception">Why the device disconnected</param>
+    public override async Task OnDisconnectedAsync(Exception exception)
+    {
+        // Gets the connection ID
+        var connectionId = Context.ConnectionId;
 
-            _devicesManager.AddDevice(deviceId, connectionId);
+        // Gets DeviceID from the ID of the connection
+        var deviceId = _devicesManager.GetDeviceIdFromConnection(connectionId);
 
-            _logger.Log(LogLevel.Information, $"Device with ID {deviceId} connected");
+        // Since the device has disconnected, remove them from the managers
+        _tokenManager.RemoveDeviceToken(deviceId);
+        _devicesManager.RemoveDevice(deviceId);
 
-            // Notifies all web client about new device connecting
-            await _webHub.Clients.All.SendAsync("DevicesChange");
-            await _webHub.Clients.All.SendAsync("StatisticsChange");
+        _logger.Log(LogLevel.Information, $"Device with ID {deviceId} disconnected");
 
-            await base.OnConnectedAsync();
-        }
+        // Notifies all web client about device disconnection
+        await _webHub.Clients.All.SendAsync("DevicesChange");
+        await _webHub.Clients.All.SendAsync("StatisticsChange");
 
-        /// <summary>
-        /// Gets called when a device disconnects
-        /// </summary>
-        /// <param name="exception">Why the device disconnected</param>
-        public override async Task OnDisconnectedAsync(Exception exception)
-        {
-            // Gets the connection ID
-            var connectionId = Context.ConnectionId;
-
-            // Gets DeviceID from the ID of the connection
-            var deviceId = _devicesManager.GetDeviceIdFromConnection(connectionId);
-
-            // Since the device has disconnected, remove them from the managers
-            _tokenManager.RemoveDeviceToken(deviceId);
-            _devicesManager.RemoveDevice(deviceId);
-
-            _logger.Log(LogLevel.Information, $"Device with ID {deviceId} disconnected");
-
-            // Notifies all web client about device disconnection
-            await _webHub.Clients.All.SendAsync("DevicesChange");
-            await _webHub.Clients.All.SendAsync("StatisticsChange");
-
-            await base.OnDisconnectedAsync(exception);
-        }
+        await base.OnDisconnectedAsync(exception);
     }
 }

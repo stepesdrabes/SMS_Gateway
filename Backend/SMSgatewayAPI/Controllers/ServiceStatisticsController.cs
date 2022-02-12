@@ -4,36 +4,35 @@ using Microsoft.Extensions.Logging;
 using SMSgatewayAPI.Models;
 using SMSgatewayAPI.Services;
 
-namespace SMSgatewayAPI.Controllers
+namespace SMSgatewayAPI.Controllers;
+
+[ApiController]
+[Route("api")]
+public class ServiceStatisticsController : Controller
 {
-    [ApiController]
-    [Route("api")]
-    public class ServiceStatisticsController : Controller
+    private readonly ILogger<ServiceStatisticsController> _logger;
+
+    private readonly IStatisticsService _statisticsService;
+
+    public ServiceStatisticsController(ILogger<ServiceStatisticsController> logger,
+        IStatisticsService statisticsService)
     {
-        private readonly ILogger<ServiceStatisticsController> _logger;
+        _logger = logger;
+        _statisticsService = statisticsService;
+    }
 
-        private readonly IStatisticsService _statisticsService;
-
-        public ServiceStatisticsController(ILogger<ServiceStatisticsController> logger,
-            IStatisticsService statisticsService)
+    [HttpGet, Route("service/statistics")]
+    public async Task<ActionResult<ServiceStatistics>> GetStatistics()
+    {
+        var serviceStatistics = new ServiceStatistics
         {
-            _logger = logger;
-            _statisticsService = statisticsService;
-        }
+            SentMessages = await _statisticsService.GetSentMessages(),
+            ActiveDevices = await _statisticsService.GetActiveDevices(),
+            RegisteredDevices = await _statisticsService.GetRegisteredDevices()
+        };
 
-        [HttpGet, Route("service/statistics")]
-        public async Task<ActionResult<ServiceStatistics>> GetStatistics()
-        {
-            var serviceStatistics = new ServiceStatistics
-            {
-                SentMessages = await _statisticsService.GetSentMessages(),
-                ActiveDevices = await _statisticsService.GetActiveDevices(),
-                RegisteredDevices = await _statisticsService.GetRegisteredDevices()
-            };
+        _logger.Log(LogLevel.Information, "Service statistics were sent through HTTP");
 
-            _logger.Log(LogLevel.Information, "Service statistics were sent through HTTP");
-
-            return Ok(serviceStatistics);
-        }
+        return Ok(serviceStatistics);
     }
 }

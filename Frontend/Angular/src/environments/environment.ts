@@ -4,8 +4,8 @@
 
 export const environment = {
   production: false,
-  BASE_URL: 'http://88.103.3.15:5000/api',
-  HUB_URL: 'http://88.103.3.15:5000/webHub'
+  BASE_URL: 'http://localhost:5000/api',
+  HUB_URL: 'http://localhost:5000/webHub'
 };
 
 /*

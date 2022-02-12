@@ -9,8 +9,8 @@ import java.io.IOException
 class HttpClient {
 
     object Endpoints {
-        const val URL = "https://localhost:5001/api/"
-        const val HUB_URL = "https://localhost:5001/connectionHub"
+        const val URL = "http://10.0.2.2:5000/api/"
+        const val HUB_URL = "http://10.0.2.2:5000/connectionHub"
         const val POST_DEVICE = "devices"
         const val GET_MESSAGES = "messages"
         const val GET_MESSAGE = "message"

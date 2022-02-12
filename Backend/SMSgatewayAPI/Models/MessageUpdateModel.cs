@@ -1,9 +1,8 @@
 using System.Text.Json.Serialization;
 
-namespace SMSgatewayAPI.Models
+namespace SMSgatewayAPI.Models;
+
+public class MessageUpdateModel
 {
-    public class MessageUpdateModel
-    {
-        [JsonPropertyName("state")] public int State { get; set; }
-    }
+    [JsonPropertyName("state")] public int State { get; set; }
 }

@@ -1,11 +1,10 @@
 using System.Text.Json.Serialization;
 
-namespace SMSgatewayAPI.Models
+namespace SMSgatewayAPI.Models;
+
+public record ServiceStatistics
 {
-    public record ServiceStatistics
-    {
-        [JsonPropertyName("sentMessages")] public int SentMessages { get; set; }
-        [JsonPropertyName("activeDevices")] public int ActiveDevices { get; set; }
-        [JsonPropertyName("registeredDevices")] public int RegisteredDevices { get; set; }
-    }
+    [JsonPropertyName("sentMessages")] public int SentMessages { get; set; }
+    [JsonPropertyName("activeDevices")] public int ActiveDevices { get; set; }
+    [JsonPropertyName("registeredDevices")] public int RegisteredDevices { get; set; }
 }

@@ -1,11 +1,10 @@
 using System.Text.Json.Serialization;
 using DAL.Entities;
 
-namespace SMSgatewayAPI.Models
+namespace SMSgatewayAPI.Models;
+
+public record SessionToken
 {
-    public record SessionToken
-    {
-        [JsonPropertyName("token")] public string Token { get; set; }
-        [JsonPropertyName("device")] public DeviceModel Model { get; set; }
-    }
+    [JsonPropertyName("token")] public string Token { get; set; }
+    [JsonPropertyName("device")] public DeviceModel Model { get; set; }
 }

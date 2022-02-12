@@ -45,7 +45,7 @@ class MainFragment(val token: SessionToken) : Fragment() {
         signalRListener = SignalRListener(
             token.token,
             token.device.deviceId,
-            { exception: Exception? -> onConnectionClosed(exception) },
+            { onConnectionClosed() },
             { messageId: String -> onSendMessage(messageId) }
         )
 
@@ -71,7 +71,7 @@ class MainFragment(val token: SessionToken) : Fragment() {
     /**
      * Handler for disruption of SignalR connection
      */
-    private fun onConnectionClosed(exception: Exception?) {
+    private fun onConnectionClosed() {
         val transaction = parentFragmentManager.beginTransaction()
 
         transaction.replace(R.id.fragment_view, CantConnectFragment())
@@ -103,7 +103,6 @@ class MainFragment(val token: SessionToken) : Fragment() {
                 sendSmsMessage(message)
 
                 messages_view.smoothScrollToPosition(0)
-
             } catch (exception: Exception) {
                 Toast.makeText(activity, exception.stackTraceToString(), Toast.LENGTH_LONG).show()
             }
